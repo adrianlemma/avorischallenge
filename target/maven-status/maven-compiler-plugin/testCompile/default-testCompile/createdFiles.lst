@@ -1,0 +1,11 @@
+com\avoris\challenge\mocks\Mock.class
+com\avoris\challenge\model\MateriaTest.class
+com\avoris\challenge\service\impl\FechaServiceImplTest.class
+com\avoris\challenge\component\EstudianteRequestToEstudianteTest.class
+com\avoris\challenge\service\impl\EstudianteServiceImplTest.class
+com\avoris\challenge\controller\EstudianteControllerTest.class
+com\avoris\challenge\model\FechaTest.class
+com\avoris\challenge\AvorischallengeApplicationTests.class
+com\avoris\challenge\constant\Constant.class
+com\avoris\challenge\service\impl\MateriaServiceImplTest.class
+com\avoris\challenge\model\EstudianteTest.class
