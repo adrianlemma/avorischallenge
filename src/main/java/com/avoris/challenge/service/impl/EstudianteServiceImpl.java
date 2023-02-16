@@ -3,11 +3,10 @@ package com.avoris.challenge.service.impl;
 import com.avoris.challenge.model.Estudiante;
 import com.avoris.challenge.repository.EstudianteRepository;
 import com.avoris.challenge.service.EstudianteService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class EstudianteServiceImpl implements EstudianteService {

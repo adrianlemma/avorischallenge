@@ -1,13 +1,16 @@
 package com.avoris.challenge.model;
 
-import com.avoris.challenge.exception.EstudianteException;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import java.util.*;
+import java.util.stream.Stream;
+import org.assertj.core.util.Sets;
+import org.junit.jupiter.api.*;
 
 import static com.avoris.challenge.constant.Constant.*;
-import static org.junit.Assert.assertThrows;
+import static com.avoris.challenge.mocks.Mock.mockFecha;
+import static com.avoris.challenge.mocks.Mock.mockMateria;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 class EstudianteTest {
 
@@ -21,35 +24,28 @@ class EstudianteTest {
         materia = new Materia(NOMBRE_MATERIA_OK, CALIFICACION_OK, null);
     }
 
-    @Test
-    @DisplayName("cuando el nombre de estudiante es nulo o invalido")
-    void cuandoElNombreDeEstudianteEsNuloOInvalido() {
-        assertThrows(EstudianteException.class, () ->
-                new Estudiante(null, EDAD_OK, fecha, Lists.newArrayList(materia)));
-        assertThrows(EstudianteException.class, () ->
-                new Estudiante(NOMBRE_ESTUDIANTE_ERROR, EDAD_OK, fecha, Lists.newArrayList(materia)));
+    @TestFactory
+    @DisplayName("Test validacion de parametros no nulos")
+    Stream<DynamicNode> dynamicTestNullParams() {
+        return listOfNullParams().stream().map(input -> dynamicContainer("test null validation",
+                Stream.of(dynamicTest("not null", () -> generateTest(input)))));
     }
 
-    @Test
-    @DisplayName("cuando la edad del estudiante es nula o invalida")
-    void cuandoLaEdadDelEstudianteEsNulaOInvalida() {
-        assertThrows(EstudianteException.class, () ->
-                new Estudiante(NOMBRE_ESTUDIANTE_OK, null, fecha, Lists.newArrayList(materia)));
-        assertThrows(EstudianteException.class, () ->
-                new Estudiante(NOMBRE_ESTUDIANTE_OK, EDAD_ERROR, fecha, Lists.newArrayList(materia)));
+    private List<Set<String>> listOfNullParams() {
+        return Arrays.asList(
+                Sets.newHashSet(Arrays.asList("edad", "fecha", "materias")),
+                Sets.newHashSet(Arrays.asList("nombre", "fecha", "materias")),
+                Sets.newHashSet(Arrays.asList("nombre", "edad", "materias")),
+                Sets.newHashSet(Arrays.asList("nombre", "edad", "fecha")));
     }
 
-    @Test
-    @DisplayName("cuando la fecha de finalizacion del estudiante es nula")
-    void cuandoLaFechaDeFinalizacionDelEstudianteEsNula() {
-        assertThrows(EstudianteException.class, () ->
-                new Estudiante(NOMBRE_ESTUDIANTE_OK, EDAD_OK, null, Lists.newArrayList(materia)));
-    }
-
-    @Test
-    @DisplayName("cuando las materias cursadas del estudiante son nulas")
-    void cuandoLasMateriasCursadasDelEstudianteSonNulas() {
-        assertThrows(EstudianteException.class, () ->
-                new Estudiante(NOMBRE_ESTUDIANTE_OK, EDAD_OK, fecha, null));
+    private RuntimeException generateTest(Set<String> input) {
+        return assertThrows(RuntimeException.class, () ->
+                new Estudiante(
+                        input.contains("nombre") ? NOMBRE_ESTUDIANTE_OK : null,
+                        input.contains("edad") ? EDAD_OK : null,
+                        input.contains("fecha") ? mockFecha() : null,
+                        input.contains("materias") ? Arrays.asList(mockMateria()) : null
+                ));
     }
 }

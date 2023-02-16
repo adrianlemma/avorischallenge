@@ -2,8 +2,7 @@ package com.avoris.challenge.model;
 
 import com.avoris.challenge.exception.EstudianteException;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -43,10 +42,7 @@ public final class Estudiante {
         this.edad = edad;
         this.nombre = nombre;
         this.fechaFinalizacion = fechaFinalizacion;
-        List<Materia> materiasCopy = new ArrayList<>();
-        materiasCursadas.forEach(materia ->
-                materiasCopy.add(new Materia(materia.getNombre(), materia.getCalificacion(), this)));
-        this.materiasCursadas = materiasCopy;
+        this.materiasCursadas = Collections.unmodifiableList(materiasCursadas);
     }
 
     public Estudiante() { }
@@ -72,6 +68,6 @@ public final class Estudiante {
     }
 
     public List<Materia> getMateriasCursadas() {
-        return new ArrayList<>(materiasCursadas);
+        return materiasCursadas;
     }
 }

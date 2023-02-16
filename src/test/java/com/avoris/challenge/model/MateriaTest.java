@@ -1,29 +1,37 @@
 package com.avoris.challenge.model;
 
+import java.util.stream.Stream;
 import com.avoris.challenge.exception.MateriaException;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.TestFactory;
 
 import static com.avoris.challenge.constant.Constant.*;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 class MateriaTest {
 
-    @Test
-    @DisplayName("cuando el nombre de materia es nulo o invalido")
-    void cuandoElNombreDeMateriaEsNuloOInvalido() {
-        assertThrows(MateriaException.class, () ->
-                new Materia(null , CALIFICACION_OK, null));
-        assertThrows(MateriaException.class, () ->
-                new Materia(NOMBRE_MATERIA_ERROR , CALIFICACION_OK, null));
+    @TestFactory
+    @DisplayName("Test validacion de parametros no nulos")
+    Stream<DynamicNode> dynamicTestNullParams() {
+        return Stream.of("Null", "Invalid").map(input ->
+                dynamicContainer("test Materia validation", Stream.of(
+                        dynamicTest("Nombre " + input, () -> testData(NOMBRE_ESTUDIANTE_OK, null, input)),
+                        dynamicTest("Calificacion " + input, () -> testData( null, CALIFICACION_OK, input)))));
     }
 
-    @Test
-    @DisplayName("cuando la calificacion de materia es nula o invalida")
-    void cuandoLaCalificacionDeMateriaEsNulaOInvalida() {
-        assertThrows(MateriaException.class, () ->
-                new Materia(NOMBRE_MATERIA_OK , null, null));
-        assertThrows(MateriaException.class, () ->
-                new Materia(NOMBRE_MATERIA_ERROR , CALIFICACION_ERROR, null));
+    private Object testData(String nombre, Double calificacion, String tipo) {
+        if (tipo.equals("Null")) {
+            return assertThrows(MateriaException.class,
+                    () -> new Materia(nombre, calificacion, null));
+        }
+        if (tipo.equals("Invalid")) {
+            return assertThrows(MateriaException.class,
+                    () -> new Materia(nombre == null ? NOMBRE_MATERIA_ERROR : nombre,
+                            calificacion == null ? CALIFICACION_ERROR : calificacion, null));
+        }
+        return null;
     }
 }

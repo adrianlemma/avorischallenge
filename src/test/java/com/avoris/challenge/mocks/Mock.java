@@ -1,7 +1,9 @@
 package com.avoris.challenge.mocks;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import com.avoris.challenge.component.EstudianteRequestToEstudiante;
-import com.avoris.challenge.exception.FechaFinalizacionException;
 import com.avoris.challenge.model.Estudiante;
 import com.avoris.challenge.model.Fecha;
 import com.avoris.challenge.model.Materia;
@@ -13,10 +15,6 @@ import com.avoris.challenge.repository.FechaRepository;
 import com.avoris.challenge.repository.MateriaRepository;
 import com.avoris.challenge.service.EstudianteService;
 import org.assertj.core.util.Lists;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static com.avoris.challenge.constant.Constant.*;
 import static org.mockito.ArgumentMatchers.any;

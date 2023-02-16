@@ -4,10 +4,9 @@ import com.avoris.challenge.model.Estudiante;
 import com.avoris.challenge.model.Fecha;
 import com.avoris.challenge.model.Materia;
 import com.avoris.challenge.model.request.EstudianteRequest;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class EstudianteRequestToEstudiante {

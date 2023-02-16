@@ -7,15 +7,14 @@ import com.avoris.challenge.model.Estudiante;
 import com.avoris.challenge.model.request.EstudianteRequest;
 import com.avoris.challenge.service.EstudianteService;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/avoris/estudiante")

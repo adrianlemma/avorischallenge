@@ -1,60 +1,69 @@
 package com.avoris.challenge.model;
 
 import com.avoris.challenge.exception.FechaFinalizacionException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.*;
 
 import static com.avoris.challenge.constant.Constant.*;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 class FechaTest {
 
-    @Test
-    @DisplayName("Cuando el constructor recibe año nulo o fuera de rango")
-    void cuandoElConstructorRecibeAnioNuloOFueraDeRango() {
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(DIA_OK, MES_OK, null));
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(DIA_OK, MES_OK, -1));
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(DIA_OK, MES_OK, 5000));
+    @TestFactory
+    @DisplayName("Test validacion de parametros no nulos")
+    Stream<DynamicNode> dynamicTestNullParams() {
+        return listOfParams().stream().map(input -> dynamicContainer("test " + input + " validation",
+                Stream.of(
+                        dynamicTest("Año " + input, () -> testData(DIA_OK, MES_OK, null, input)),
+                        dynamicTest("Mes " + input, () -> testData(DIA_OK, null, ANIO_OK, input)),
+                        dynamicTest("Mes " + input, () -> testData(null, MES_OK, ANIO_OK, input)))));
     }
 
-    @Test
-    @DisplayName("Cuando el constructor recibe mes nulo o fuera de rango")
-    void cuandoElConstructorRecibeMesNuloOFueraDeRango() {
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(DIA_OK, null, ANIO_OK));
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(DIA_OK, -1, ANIO_OK));
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(DIA_OK, 13, ANIO_OK));
+    private List<String> listOfParams() {
+        return Arrays.asList("Null", "Negative", "Exceeded");
     }
 
-    @Test
-    @DisplayName("Cuando el constructor recibe dia nulo o fuera de rango")
-    void cuandoElConstructorRecibeDiaNuloOFueraDeRango() {
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(null, MES_OK, ANIO_OK));
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(-1, MES_OK, ANIO_OK));
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(32, MES_OK, ANIO_OK));
-        // mes de 30 dias
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(31, 4, ANIO_OK));
-        // mes de 31 dias
-        Fecha fecha = new Fecha(31, 5, ANIO_OK);
-        Assertions.assertFalse(fecha.getFecha().isBlank());
+    private Object testData(Integer dia, Integer mes, Integer anio, String tipo) {
+        if (tipo.equals("Null")) {
+            return assertThrows(FechaFinalizacionException.class,
+                    () -> new Fecha(dia, mes, anio));
+        }
+        if (tipo.equals("Negative")) {
+            return assertThrows(FechaFinalizacionException.class,
+                    () -> new Fecha(dia == null ? -1 : dia, mes == null ? -1 : mes, anio == null ? -1 : anio));
+        }
+        if (tipo.equals("Exceeded")) {
+            return assertThrows(FechaFinalizacionException.class,
+                    () -> new Fecha(dia == null ? 32 : dia, mes == null ? 13 : mes, anio == null ? 4000 : anio));
+        }
+        return null;
     }
 
-    @Test
-    @DisplayName("Validacion de dias en años viciestos")
-    void validacionDeDiasEnAnioViciestos() {
-        assertThrows(FechaFinalizacionException.class, () ->
-                new Fecha(29, 2, 2021));
-        Fecha fecha = new Fecha(29, 2, 2020);
-        Assertions.assertFalse(fecha.getFecha().isBlank());
+    @Nested
+    @DisplayName("Test dias segun el mes y año viciesto")
+    class testDias {
+        @Test
+        @DisplayName("Cuando el dia esta fuera de rango segun su mes")
+        void cuandoElConstructorRecibeDiaNuloOFueraDeRango() {
+            // mes de 30 dias
+            assertThrows(FechaFinalizacionException.class, () ->
+                    new Fecha(31, 4, ANIO_OK));
+            // mes de 31 dias
+            assertThrows(FechaFinalizacionException.class, () ->
+                    new Fecha(32, 4, ANIO_OK));
+        }
+
+        @Test
+        @DisplayName("Validacion de dias en años viciestos")
+        void validacionDeDiasEnAnioViciestos() {
+            assertThrows(FechaFinalizacionException.class, () ->
+                    new Fecha(29, 2, 2021));
+            Fecha fecha = new Fecha(29, 2, 2020);
+            Assertions.assertFalse(fecha.getFecha().isBlank());
+        }
     }
 }
